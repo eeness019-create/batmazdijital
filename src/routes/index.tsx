@@ -55,25 +55,52 @@ const services = [
 
 const projects = [
   {
-    category: 'Marka Kimliği · Web Tasarım',
+    category: 'Mimarlık · Kurumsal Web',
     name: 'Noma Atelier',
     description: 'Mimarlık stüdyosu için sessiz lüksü dijital deneyime taşıyan bütünsel marka dünyası.',
-    className: 'project-coral',
-    monogram: 'N/A',
+    theme: 'blue',
+    variant: 'stacked' as const,
+    url: 'nomaatelier.com',
   },
   {
-    category: 'E-Ticaret · Art Direction',
+    category: 'E-Ticaret · Doğal Bakım',
     name: 'Mori Botanics',
     description: 'Doğal bakım markasının bilim ve doğa arasındaki hikâyesini anlatan güçlü e-ticaret deneyimi.',
-    className: 'project-lime',
-    monogram: 'MB',
+    theme: 'lime',
+    variant: 'grid' as const,
+    url: 'moribotanics.com',
   },
   {
-    category: 'Logo · Kurumsal Web',
+    category: 'Hukuk · Kurumsal Kimlik',
     name: 'Fora Legal',
     description: 'Yeni nesil hukuk bürosu için güven veren, net ve alışılmışın dışında bir dijital kimlik.',
-    className: 'project-blue',
-    monogram: 'FL',
+    theme: 'dark',
+    variant: 'stacked' as const,
+    url: 'foralegal.com',
+  },
+  {
+    category: 'Restoran · Yeme-İçme',
+    name: 'Zeytin & Tuz',
+    description: 'Bursa\'nın köklü lezzetlerini modern bir sofraya taşıyan, iştah açan ve sıcak bir web deneyimi.',
+    theme: 'coral',
+    variant: 'grid' as const,
+    url: 'zeytinvetuz.com',
+  },
+  {
+    category: 'Emlak · İlan Platformu',
+    name: 'Anka Gayrimenkul',
+    description: 'Portföydeki her mülkü güvenilir ve şık bir vitrinde sunan, hızlı filtrelenebilir emlak sitesi.',
+    theme: 'sand',
+    variant: 'stacked' as const,
+    url: 'ankagayrimenkul.com',
+  },
+  {
+    category: 'Fitness · Spor Stüdyosu',
+    name: 'Form Stüdyo',
+    description: 'Üyelik ve ders programını tek ekranda toplayan, enerjik ve harekete geçiren bir spor markası.',
+    theme: 'lilac',
+    variant: 'grid' as const,
+    url: 'formstudio.com',
   },
 ]
 
@@ -98,6 +125,46 @@ function BrandLogo({ footer = false }: { footer?: boolean }) {
         <small>Dijital Stüdyo</small>
       </span>
     </span>
+  )
+}
+
+function ProjectMock({ variant, url }: { variant: 'stacked' | 'grid'; url: string }) {
+  return (
+    <div className="mock-frame">
+      <div className="mock-bar">
+        <span className="mock-dot" />
+        <span className="mock-dot" />
+        <span className="mock-dot" />
+        <span className="mock-url">{url}</span>
+      </div>
+      <div className="mock-body">
+        <div className="mock-nav">
+          <span className="mock-navdot" />
+          <span className="mock-navline" />
+          <span className="mock-navline" />
+          <span className="mock-navline" />
+        </div>
+        {variant === 'grid' ? (
+          <>
+            <div className="mock-line lg" />
+            <div className="mock-line sm" />
+            <div className="mock-tiles">
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="mock-photo" />
+            <div className="mock-line lg" />
+            <div className="mock-line md" />
+            <span className="mock-cta">Detay ↗</span>
+          </>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -151,7 +218,7 @@ function HomePage() {
 
       <section className="hero" id="top">
         <div className="hero-eyebrow reveal">
-          <span className="status-dot" /> BATMAZ / İstanbul merkezli bağımsız dijital stüdyo
+          <span className="status-dot" /> BATMAZ / Bursa merkezli bağımsız dijital stüdyo
         </div>
         <div className="hero-grid">
           <div className="hero-copy">
@@ -225,11 +292,10 @@ function HomePage() {
         </div>
         <div className="project-grid">
           {projects.map((project, index) => (
-            <article className={`project-card ${index === 0 ? 'project-featured' : ''}`} key={project.name}>
-              <div className={`project-visual ${project.className}`}>
+            <article className="project-card" key={project.name}>
+              <div className={`project-visual project-${project.theme}`}>
                 <span className="project-index">0{index + 1}</span>
-                <div className="project-monogram">{project.monogram}</div>
-                <div className="project-orbit" />
+                <ProjectMock variant={project.variant} url={project.url} />
               </div>
               <div className="project-info">
                 <span>{project.category}</span>
@@ -266,9 +332,15 @@ function HomePage() {
           <span className="kicker">/ Birlikte Üretelim</span>
           <h2>İyi bir fikrin<br /><em>var mı?</em></h2>
           <p>Bursa merkezli dijital stüdyomuza projenizden kısaca bahsedin. En geç 2 iş günü içinde size dönüş yapalım.</p>
+          <a className="contact-phone" href="tel:+905305820366" aria-label="Hemen ara: 0530 582 03 66">
+            <span className="contact-phone-icon"><Phone size={20} /></span>
+            <span className="contact-phone-text">
+              <small>Hemen Ara</small>
+              <strong>0530 582 03 66</strong>
+            </span>
+          </a>
           <div className="contact-detail">
             <span><MapPin size={18} /> Bursa merkezli dijital stüdyo</span>
-            <a href="tel:+905305820366"><Phone size={18} /> 530 582 03 66</a>
             <span><Layers3 size={18} /> Web, marka ve grafik tasarım</span>
             <span><Check size={18} /> Ücretsiz ilk görüşme</span>
           </div>
