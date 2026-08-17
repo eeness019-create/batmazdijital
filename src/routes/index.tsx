@@ -179,16 +179,10 @@ function HomePage() {
     const formData = new FormData(form)
 
     try {
-      const encodedData = new URLSearchParams(
-        Array.from(formData.entries()).map(
-          ([key, value]): [string, string] => [key, String(value)],
-        ),
-      )
-
-      const response = await fetch('/__forms.html', {
+      const response = await fetch('https://formspree.io/f/mljrpywo', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encodedData.toString(),
+        body: formData,
+        headers: { Accept: 'application/json' },
       })
 
       if (!response.ok) throw new Error('Form gönderilemedi')
@@ -346,8 +340,7 @@ function HomePage() {
           </div>
         </div>
         <form className="contact-form" name="proje-talebi" onSubmit={handleSubmit}>
-          <input type="hidden" name="form-name" value="proje-talebi" />
-          <input type="hidden" name="subject" value="Batmaz Dijital Stüdyo — Yeni proje talebi" />
+          <input type="hidden" name="_subject" value="Batmaz Dijital Stüdyo — Yeni proje talebi" />
           <div className="form-row">
             <label>
               Adınız
