@@ -59,6 +59,7 @@ button { color: inherit; }
 .header-cta:hover { background: var(--acid); border-color: var(--acid); color: var(--ink); }
 
 .hero { position: relative; min-height: 100svh; padding: 150px clamp(22px, 5vw, 76px) 110px; overflow: hidden; color: var(--paper); background: var(--ink); }
+.particle-field { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .hero::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .28; background-image: radial-gradient(rgba(255,255,255,.25) .55px, transparent .55px); background-size: 5px 5px; }
 .hero::after { content: ''; position: absolute; width: 520px; height: 520px; right: -160px; top: 90px; border: 1px solid rgba(214,255,56,.25); border-radius: 50%; box-shadow: 0 0 0 100px rgba(214,255,56,.03), 0 0 0 200px rgba(214,255,56,.02); }
 .hero-eyebrow { position: relative; z-index: 2; display: flex; align-items: center; gap: 9px; margin-bottom: 35px; font-size: 10px; text-transform: uppercase; letter-spacing: 2.15px; }
