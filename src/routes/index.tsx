@@ -12,7 +12,7 @@ import {
   Phone,
   Sparkles,
 } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -168,6 +168,110 @@ function ProjectMock({ variant, url }: { variant: 'stacked' | 'grid'; url: strin
   )
 }
 
+function ParticleField() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const parent = canvas?.parentElement
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !parent || !ctx) return
+
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    const colors = ['241,240,232', '214,255,56', '255,107,82']
+
+    type Particle = {
+      x: number
+      y: number
+      vx: number
+      vy: number
+      r: number
+      color: string
+      phase: number
+    }
+
+    let width = 0
+    let height = 0
+    let particles: Particle[] = []
+    let frameId = 0
+
+    function resize() {
+      width = parent!.clientWidth
+      height = parent!.clientHeight
+      const ratio = window.devicePixelRatio || 1
+      canvas!.width = width * ratio
+      canvas!.height = height * ratio
+      canvas!.style.width = `${width}px`
+      canvas!.style.height = `${height}px`
+      ctx!.setTransform(ratio, 0, 0, ratio, 0, 0)
+    }
+
+    function initParticles() {
+      const count = Math.min(80, Math.max(24, Math.floor((width * height) / 13000)))
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.18,
+        r: Math.random() * 1.7 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        phase: Math.random() * Math.PI * 2,
+      }))
+    }
+
+    function paint(animated: boolean) {
+      ctx!.clearRect(0, 0, width, height)
+      for (const p of particles) {
+        if (animated) {
+          p.x += p.vx
+          p.y += p.vy
+          p.phase += 0.018
+          if (p.x < -12) p.x = width + 12
+          if (p.x > width + 12) p.x = -12
+          if (p.y < -12) p.y = height + 12
+          if (p.y > height + 12) p.y = -12
+        }
+        const alpha = 0.22 + Math.sin(p.phase) * 0.18
+        ctx!.beginPath()
+        ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx!.fillStyle = `rgba(${p.color},${Math.max(alpha, 0.06)})`
+        ctx!.fill()
+      }
+    }
+
+    function loop() {
+      paint(true)
+      frameId = requestAnimationFrame(loop)
+    }
+
+    resize()
+    initParticles()
+
+    if (prefersReducedMotion) {
+      paint(false)
+    } else {
+      loop()
+    }
+
+    function handleResize() {
+      resize()
+      initParticles()
+      if (prefersReducedMotion) paint(false)
+    }
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (frameId) cancelAnimationFrame(frameId)
+    }
+  }, [])
+
+  return <canvas className="particle-field" ref={canvasRef} aria-hidden="true" />
+}
+
 function HomePage() {
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
@@ -179,7 +283,7 @@ function HomePage() {
     const formData = new FormData(form)
 
     try {
-      const response = await fetch('https://formspree.io/f/mljrpywo', {
+      const response = await fetch('https://formspree.io/f/FORMSPREE_ID_BURAYA', {
         method: 'POST',
         body: formData,
         headers: { Accept: 'application/json' },
@@ -211,6 +315,7 @@ function HomePage() {
       </header>
 
       <section className="hero" id="top">
+        <ParticleField />
         <div className="hero-eyebrow reveal">
           <span className="status-dot" /> BATMAZ / Bursa merkezli bağımsız dijital stüdyo
         </div>
