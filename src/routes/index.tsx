@@ -272,7 +272,49 @@ function ParticleField() {
   return <canvas className="particle-field" ref={canvasRef} aria-hidden="true" />
 }
 
+function IntroSplash({ onDone }: { onDone: () => void }) {
+  const [phase, setPhase] = useState<'enter' | 'exit' | 'done'>('enter')
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    if (prefersReducedMotion) {
+      onDone()
+      setPhase('done')
+      return
+    }
+
+    document.body.style.overflow = 'hidden'
+
+    const t1 = window.setTimeout(() => setPhase('exit'), 1100)
+    const t2 = window.setTimeout(() => onDone(), 1650)
+    const t3 = window.setTimeout(() => {
+      setPhase('done')
+      document.body.style.overflow = ''
+    }, 2000)
+
+    return () => {
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+      window.clearTimeout(t3)
+      document.body.style.overflow = ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (phase === 'done') return null
+
+  return (
+    <div className={`intro-splash ${phase === 'exit' ? 'is-exiting' : ''}`} aria-hidden="true">
+      <span className="intro-wordmark">BATMAZ</span>
+    </div>
+  )
+}
+
 function HomePage() {
+  const [introDone, setIntroDone] = useState(false)
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -300,6 +342,7 @@ function HomePage() {
 
   return (
     <main>
+      <IntroSplash onDone={() => setIntroDone(true)} />
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Batmaz Dijital Stüdyo ana sayfa">
           <BrandLogo />
@@ -316,18 +359,18 @@ function HomePage() {
 
       <section className="hero" id="top">
         <ParticleField />
-        <div className="hero-eyebrow reveal">
+        <div className={`hero-eyebrow ${introDone ? 'reveal' : 'pre-reveal'}`}>
           <span className="status-dot" /> BATMAZ / Bursa merkezli bağımsız dijital stüdyo
         </div>
         <div className="hero-grid">
           <div className="hero-copy">
-            <h1 className="reveal delay-1">
+            <h1 className={introDone ? 'reveal delay-1' : 'pre-reveal'}>
               Markanı<br />
               <em>dijitalde</em><br />
               büyütelim.
             </h1>
           </div>
-          <div className="hero-side reveal delay-2">
+          <div className={`hero-side ${introDone ? 'reveal delay-2' : 'pre-reveal'}`}>
             <p>
               Markaları sıradanlıktan çıkaran web siteleri, güçlü kimlikler ve fark yaratan tasarımlar üretiyoruz.
             </p>
